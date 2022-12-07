@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "218261271677",
+    "firebase_url": "https://husl-b64ea-default-rtdb.firebaseio.com",
+    "project_id": "husl-b64ea",
+    "storage_bucket": "husl-b64ea.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:218261271677:android:0e8015a60bff8c01b5ed14",
+        "android_client_info": {
+          "package_name": "com.huslandroid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "218261271677-2jmos9p0l9fthvd2597kd4h1rggbi275.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFL7oy9_DpLwRkq9ut1l2hsib_dT3Zpxo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "218261271677-2jmos9p0l9fthvd2597kd4h1rggbi275.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
