@@ -310,7 +310,7 @@ const ProfileScreen = ({navigation}) => {
                             textDayFontFamily: 'Lato-Bold',
                             textMonthFontFamily: 'Lato-Bold',
                             textDayHeaderFontFamily: 'Lato-Bold',
-                            selectedDayBackgroundColor: '#FB601F'
+                            selectedDayBackgroundColor: 'black'
                         }}
                         />
                         
