@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, Button, ScrollView } from 'react-native'
 import { AuthContext } from '../../../states/AuthContext';
 import { sharedLocalState } from '../../../states/LocalState';
 import firestore from '@react-native-firebase/firestore'
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LineChart } from 'react-native-chart-kit';
 import moment from 'moment';
 import { RefreshControl } from 'react-native-gesture-handler';
@@ -20,7 +20,7 @@ const ProfileScreen = ({navigation}) => {
     const {user, logout} = useContext(AuthContext);
 
 
-
+    const [calendarDay, setCalendarDay] = useState(null);
 
     const [loading, setLoading] = useState(true);
 
@@ -39,12 +39,14 @@ const ProfileScreen = ({navigation}) => {
       };
 
     useEffect(() => {
-       // fillTheGaps();
+       fillTheGaps();
        getUser();
        getActivities();  
-        
+
+       return   
     }, [])
 
+    
    
 
     const getUser = async() => {
@@ -54,66 +56,46 @@ const ProfileScreen = ({navigation}) => {
         })
     }
 
-    const getCurrentWeekData = () => {
-
-        let currentWeekDuration = []; 
-        for (let i = 0; i < userDays.length; i++) {
-            if (userDays[i] == currentWeek) {
-                currentWeekDuration = userDuration.slice(userDays.indexOf(userDays[i]))
-            }
-        }
-        for (let i = 0; i < 7; i++) {
-            if (typeof currentWeekDuration[i] == 'undefined') {
-                currentWeekDuration[i] = 0 
-            }
-        }
-        return currentWeekDuration
-    } 
-
-    
-
     // pull all activities
     // append current week to testdata
     // 
+
+
+   
+
+
+    const waitingforData = () => {
+        sums = splitDurationDateIntoWeeks();
+        sums = sums.map(array => array.reduce((a, b) => a + b, 0));
+        return sums 
+    }
 
     const splitDurationDateIntoWeeks = () => {
         let subArrays = [[]]
         for (let i = 0; i < userDuration.length; i+=7) {
             var subArray = userDuration.slice(i, i+7)
             subArrays.unshift(subArray)
+
         }
         for (let i = 0; i < 7; i++) {
             if (typeof subArrays[0][i] == 'undefined') {
                 subArrays[0][i] = 0
             }
         }
-        
         if (subArrays.length == 1) {
-            return [[0,0,0,1,0,0,0]]
+            return [[0,0,0,0,0,0,0]]
         }
         subArrays.pop()
         return subArrays
     }
 
-    const structureWeeklyData = () => {
-        let structuredData = [];
-        structuredData = [userDuration]
-
-        let currentWeekDuration = []
-        for (let i = 0; i < userDays.length; i++) {
-            if (userDays[i] == currentWeek) {
-                currentWeekDuration = userDuration.slice(userDays.indexOf(userDays[i]))
-            }
-        }
-        for (let i = 0; i < 7; i++) {
-            if (typeof currentWeekDuration[i] == 'undefined') {
-                currentWeekDuration[i] = 0 
-            }
-        }
-        console.log(structuredData.unshift(currentWeekDuration))
+/*
+    const sumAllWeekDurations = () => {
+        var aOA = splitDurationDateIntoWeeks()
+        var sums = aOA.map(array => array.reduce((a,b) => a+b, 0));
+        setDisplayAllWeekMinutes(sums)
     }
-    
-
+    */
 
     const fillTheGaps = async () => {   
 
@@ -210,42 +192,58 @@ const ProfileScreen = ({navigation}) => {
         }
     }
 
+
+
     const fillGapsAndGetActivities = async () => {
-       // await fillTheGaps();
-        //await getActivities();
+        await fillTheGaps();
+        await getActivities();
         console.log(userDuration)
-        console.log(getCurrentWeekData())
-
-        console.log(splitDurationDateIntoWeeks())
-
-        
     }
-
-    const images = [
-        'https://www.shutterstock.com/blog/wp-content/uploads/sites/5/2018/05/Gradient-Roundup-Illustrator-02.jpg',
-        'https://mir-s3-cdn-cf.behance.net/project_modules/1400/4d845686128681.5d909dad4ddd3.jpg'
-    ]
-
-    const testData = splitDurationDateIntoWeeks();
     
 
-    const [imgActive, setimgActive] = useState(0);
+ 
 
-    onchange = (nativeEvent) => {
-        if(nativeEvent) {
-            const slide = Math.ceil(nativeEvent.contentOffset.x / nativeEvent.layoutMeasurement.width)
-            if (slide != imgActive) {
-                setimgActive(slide)
-            }
+
+    const changeWeek = (direction) => {
+        if (direction == 'left') {
+            grabWeek = displayDate
+            grabWeek = grabWeek.subtract(1, 'w')
+            setDisplayDate(grabWeek)
+            setDisplayWeek(`Week of ${grabWeek.format('MMM D')}`)
+            setDisplayWeekMinutesPos(displayWeekMinutesPos+1)
+            setDisplayWeekMinutes(onceMore[displayWeekMinutesPos])
+            
+           
+        }
+        if (direction == 'right') {
+            grabWeek = displayDate
+            grabWeek = grabWeek.add(1, 'w')
+            setDisplayDate(grabWeek)
+            setDisplayWeek(`Week of ${grabWeek.format('MMM D')}`)
+            setDisplayWeekMinutesPos(displayWeekMinutesPos-1)
+            setDisplayWeekMinutes(onceMore[displayWeekMinutesPos])
         }
     }
-    //       <Button title={'logout'} color={'#B3D57B'} onPress={() => logout()}/>
 
+
+
+    
+    const [weekOffset, setweekOffset] = useState(0);
+    const [displayWeek, setDisplayWeek] = useState(`Week of ${moment().startOf('week').format('MMM D')}`)
+    const [displayDate, setDisplayDate] = useState(moment().startOf('week'))
+   
+    const testData = splitDurationDateIntoWeeks();
+    const onceMore = waitingforData();
+    const [displayWeekMinutes, setDisplayWeekMinutes] = useState(onceMore[0])
+    const [displayWeekMinutesPos, setDisplayWeekMinutesPos] = useState(0)
+
+    //       
     return (
         <ScrollView style={{flex: 1}} refreshControl={
             <RefreshControl refreshing={loading} onRefresh={() => {fillGapsAndGetActivities()}}/>}
         >
-    
+
+
             <View style={styles.main}>
                 <View style={styles.userInfo}>
                     <Image style={styles.pP} source={{uri: userData ? userData.profPic : null}}/>
@@ -253,15 +251,24 @@ const ProfileScreen = ({navigation}) => {
                 </View>
 
                 <View style={styles.recapBox}>
-
                     <View>
-                        <Text style={styles.boxText}>{currentWeekBetterFormatted}</Text>
-                        <Text style={styles.boxSubText}>5hrs 34min</Text>
+                        <Text style={styles.boxText}>{displayWeek}</Text>
+                        <Text style={styles.boxSubText}>{`${moment.utc(displayWeekMinutes*1000).format('HH:mm:ss')}`}</Text>
                     </View>
                     
-                    <View style={{height: 220, width: 360, backgroundColor: '#fff'}}>
+                    <View style={{height: 210, width: 360, backgroundColor: '#fff'}}>
                         <ScrollView 
-
+                            onMomentumScrollEnd={(e) => {
+                                var currentOffset = e.nativeEvent.contentOffset.x;
+                                if (currentOffset == weekOffset + 360) {
+                                    changeWeek('left')
+                                    setweekOffset(currentOffset)
+                                } 
+                                if (currentOffset == weekOffset - 360) {
+                                    changeWeek('right')
+                                    setweekOffset(currentOffset)
+                                }
+                            }}
                             style={{height: 220 , width: 360, backgroundColor: '#fff', transform: [{ scaleX: -1}]}}
                             showsHorizontalScrollIndicator={true}
                             horizontal
@@ -284,7 +291,7 @@ const ProfileScreen = ({navigation}) => {
                                     }}
                                     style={styles.graphStyle}
                                     width={380}
-                                    height={200}
+                                    height={190}
                                     chartConfig={chartConfig}
                                 /> )
                                 
@@ -300,18 +307,23 @@ const ProfileScreen = ({navigation}) => {
                     <View >
                     
                         <Calendar 
-                        disableMonthChange={true} 
-                        enableSwipeMonths={true} 
-                        style={{height: 60}}
-                        hideArrows={true}
+                        style={{height: 100, alignContent: 'center'}}
                         theme={{
                             textDayFontSize: 10,
                             textDayHeaderFontSize: 10,
                             textDayFontFamily: 'Lato-Bold',
                             textMonthFontFamily: 'Lato-Bold',
                             textDayHeaderFontFamily: 'Lato-Bold',
-                            selectedDayBackgroundColor: 'black'
+                            arrowColor: '#FC8E18'
                         }}
+                        selected={false}
+                        onDayPress={(day) => setCalendarDay(day.dateString)}
+                        markedDates={{[calendarDay]: {
+                            selected: true,
+                            disableTouchEvent: true,
+                            selectedColor: "#FC8E18",
+                            selectedTextColor: 'white'
+                        }}}
                         />
                         
                     </View>
@@ -363,7 +375,7 @@ const styles = StyleSheet.create ({
     recapBox: {
         overflow: 'hidden',
         width: 360,
-        height: 270,
+        height: 260,
         backgroundColor: '#fff',
         borderRadius: 10,
         shadowColor: "#000",
@@ -379,7 +391,7 @@ const styles = StyleSheet.create ({
     calendarBox: {
         overflow: 'hidden',
         width: 360,
-        height: 250,
+        height: 260,
         backgroundColor: '#fff',
         borderRadius: 10,
         shadowColor: "#000",

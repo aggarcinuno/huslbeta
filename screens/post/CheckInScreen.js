@@ -4,7 +4,7 @@ import { View, Text, StyleSheet} from 'react-native';
 import MainButton from '../../components/MainButton';
 import RestButton from '../../components/RestButton';
 import { AuthContext } from '../../states/AuthContext';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import firestore from '@react-native-firebase/firestore'
 import moment from 'moment';

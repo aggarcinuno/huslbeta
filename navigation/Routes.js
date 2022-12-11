@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import PrimaryNavigation from './PrimaryNavigation';
 import { PostNavigator } from './post/PostStackNavigation';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import auth from '@react-native-firebase/auth';
 import { AuthContext } from '../states/AuthContext';

@@ -3,7 +3,7 @@ import { FlatList, RefreshControl } from 'react-native-gesture-handler';
 import {Container} from './FeedStyles';
 import PostCard from '../../../components/PostCard';
 import firestore from '@react-native-firebase/firestore';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const FeedScreen = ({navigation}) => {
 

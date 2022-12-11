@@ -5,7 +5,7 @@ import { sharedLocalState } from '../../states/LocalState';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 import { AuthContext } from '../../states/AuthContext';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment, { duration } from 'moment';
 
 
